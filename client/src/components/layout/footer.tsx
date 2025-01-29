@@ -1,12 +1,7 @@
 import { Link } from "wouter";
 import { SiFacebook, SiInstagram } from "react-icons/si";
-import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
-  const { data: contactInfo } = useQuery({
-    queryKey: ["/api/contact"],
-  });
-
   return (
     <footer className="bg-gray-50 border-t">
       <div className="container mx-auto px-4 py-12">
@@ -49,22 +44,18 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-600">
-              {contactInfo && (
-                <>
-                  <li>{contactInfo.addressLine1}</li>
-                  <li>{`${contactInfo.city}, ${contactInfo.state} ${contactInfo.zipCode}`}</li>
-                  <li>
-                    <a href={`mailto:${contactInfo.email}`} className="hover:text-primary">
-                      {contactInfo.email}
-                    </a>
-                  </li>
-                  <li>
-                    <a href={`tel:${contactInfo.phone.replace(/\D/g, '')}`} className="hover:text-primary">
-                      {contactInfo.phone}
-                    </a>
-                  </li>
-                </>
-              )}
+              <li>4203 Portage st</li>
+              <li>Kalamazoo, MI 49001</li>
+              <li>
+                <a href="mailto:briartistryinfo@gmail.com" className="hover:text-primary">
+                  briartistryinfo@gmail.com
+                </a>
+              </li>
+              <li>
+                <a href="tel:2693644407" className="hover:text-primary">
+                  (269) 364-4407
+                </a>
+              </li>
             </ul>
           </div>
 
