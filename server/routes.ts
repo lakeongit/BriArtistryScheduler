@@ -6,28 +6,16 @@ import { eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { z } from "zod";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024
 const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-const chatMessageSchema = z.object({
-  message: z.string().min(1, "Message is required"),
-});
-
 const appointmentSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  service: z.string().min(1, "Service selection is required"),
+  name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  serviceDateTime: z.string().min(1, "Service date and time are required"),
-  serviceLocation: z.string().min(1, "Service location is required"),
-  desiredFinishTime: z.string().min(1, "Desired finish time is required"),
-  makeupApplicationsCount: z.number().min(1, "Number of makeup applications is required"),
-  needsBridalHair: z.boolean(),
-  hairServicesCount: z.number().optional(),
-  needsBridalSkincare: z.boolean(),
-  notes: z.string().optional(),
+  dateTime: z.string().min(1, "Date and time are required"),
 });
 
 export function registerRoutes(app: Express): Server {
@@ -42,9 +30,12 @@ export function registerRoutes(app: Express): Server {
     try {
       const validatedData = appointmentSchema.parse(req.body);
       const appointment = await db.insert(appointments).values({
-        ...validatedData,
+        serviceId: parseInt(validatedData.service),
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        dateTime: new Date(validatedData.dateTime),
         status: "pending",
-        serviceDateTime: new Date(validatedData.serviceDateTime),
       }).returning();
 
       res.json(appointment[0]);
@@ -65,7 +56,7 @@ export function registerRoutes(app: Express): Server {
       const { date } = req.query;
       const results = await db.select()
         .from(appointments)
-        .where(date ? eq(appointments.serviceDateTime, new Date(date as string)) : undefined);
+        .where(date ? eq(appointments.dateTime, new Date(date as string)) : undefined);
       res.json(results);
     } catch (error) {
       console.error("Appointment fetch error:", error);

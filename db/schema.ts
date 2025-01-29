@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const services = pgTable("services", {
@@ -12,17 +12,10 @@ export const services = pgTable("services", {
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   serviceId: integer("service_id").references(() => services.id),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
+  name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
-  serviceDateTime: timestamp("service_date_time").notNull(),
-  serviceLocation: text("service_location").notNull(),
-  desiredFinishTime: text("desired_finish_time").notNull(),
-  makeupApplicationsCount: integer("makeup_applications_count").notNull(),
-  needsBridalHair: boolean("needs_bridal_hair").notNull(),
-  hairServicesCount: integer("hair_services_count"),
-  needsBridalSkincare: boolean("needs_bridal_skincare").notNull(),
+  dateTime: timestamp("date_time").notNull(),
   status: text("status").notNull().default("pending"),
   notes: text("notes"),
 });

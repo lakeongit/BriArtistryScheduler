@@ -2,46 +2,37 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const bookingFormSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  service: z.string().min(1, "Please select a service"),
+  name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  serviceDateTime: z.string().min(1, "Date and location are required"),
-  serviceLocation: z.string().min(1, "Location is required"),
-  desiredFinishTime: z.string().min(1, "Desired finish time is required"),
-  makeupApplicationsCount: z.string().min(1, "Number of people is required"),
-  needsBridalHair: z.boolean(),
-  hairServicesCount: z.string().optional(),
-  needsBridalSkincare: z.boolean(),
+  dateTime: z.string().min(1, "Date and time are required"),
 });
 
 type BookingFormData = z.infer<typeof bookingFormSchema>;
 
 export function BookingForm() {
   const { toast } = useToast();
-  
+
+  const { data: services } = useQuery({
+    queryKey: ["/api/services"],
+  });
+
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      service: "",
+      name: "",
       email: "",
       phone: "",
-      serviceDateTime: "",
-      serviceLocation: "",
-      desiredFinishTime: "",
-      makeupApplicationsCount: "",
-      needsBridalHair: false,
-      hairServicesCount: "",
-      needsBridalSkincare: false,
+      dateTime: "",
     },
   });
 
@@ -52,11 +43,11 @@ export function BookingForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to submit booking");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -76,82 +67,44 @@ export function BookingForm() {
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
-        <div className="text-3xl font-bold mb-8">
-          We would love to have your service!
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="max-w-md mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-6">Book an Appointment</h2>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
           <FormField
             control={form.control}
-            name="firstName"
+            name="service"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Jane" {...field} />
-                </FormControl>
+                <FormLabel>Service</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {services?.map((service: any) => (
+                      <SelectItem key={service.id} value={service.id.toString()}>
+                        {service.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
-            name="lastName"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Garcia" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., email@example.com" type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="serviceDateTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date & location of Service</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Enter Details along with any additional info"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="desiredFinishTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Desired finish time for services</FormLabel>
-                <FormControl>
-                  <Input placeholder="Add answer here" {...field} />
+                  <Input placeholder="Your name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -160,93 +113,55 @@ export function BookingForm() {
 
           <FormField
             control={form.control}
-            name="makeupApplicationsCount"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>How many makeup applications needed? Include yourself</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter number of people" {...field} />
+                  <Input placeholder="Your email" type="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
 
-        <FormField
-          control={form.control}
-          name="needsBridalHair"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Do you need Bridal Hair as well?</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={(value) => field.onChange(value === "true")}
-                  defaultValue={field.value ? "true" : "false"}
-                  className="flex space-x-4"
-                >
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <RadioGroupItem value="true" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Yes</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <RadioGroupItem value="false" />
-                    </FormControl>
-                    <FormLabel className="font-normal">No</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone</FormLabel>
+                <FormControl>
+                  <Input placeholder="Your phone number" type="tel" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="hairServicesCount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How Many people for Hair include yourself</FormLabel>
-              <FormControl>
-                <Input placeholder="Add answer here" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="dateTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date & Time</FormLabel>
+                <FormControl>
+                  <Input type="datetime-local" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="needsBridalSkincare"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bridal Skincare Services</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={(value) => field.onChange(value === "true")}
-                  defaultValue={field.value ? "true" : "false"}
-                  className="flex space-x-4"
-                >
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <RadioGroupItem value="true" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Please select if interested in Wedding day prep services</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full" disabled={mutation.isPending}>
-          {mutation.isPending ? "Submitting..." : "Book Now"}
-        </Button>
-      </form>
-    </Form>
+          <Button 
+            type="submit" 
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Booking..." : "Book Appointment"}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }
