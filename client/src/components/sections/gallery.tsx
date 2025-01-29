@@ -9,7 +9,7 @@ import { useState } from "react";
 
 const images = [
   {
-    src: "/attached_assets/1.jpeg",
+    src: "/attached_assets/1.jpg",
     alt: "Beautiful bridal styling and preparation"
   },
   {
@@ -49,9 +49,9 @@ const images = [
 export default function Gallery() {
   const [imgError, setImgError] = useState<{[key: string]: boolean}>({});
 
-  const handleImageError = (index: number) => {
+  const handleImageError = (index: number, src: string) => {
     setImgError(prev => ({...prev, [index]: true}));
-    console.error(`Failed to load image at index ${index}`);
+    console.error(`Failed to load image at index ${index}, src: ${src}`);
   };
 
   return (
@@ -63,18 +63,19 @@ export default function Gallery() {
           <CarouselContent>
             {images.map((image, index) => (
               <CarouselItem key={index}>
-                <div className="relative overflow-hidden rounded-lg">
+                <div className="relative overflow-hidden rounded-lg shadow-lg">
                   {!imgError[index] ? (
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-[600px] object-cover"
+                      className="w-full h-[600px] object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
-                      onError={() => handleImageError(index)}
+                      onError={() => handleImageError(index, image.src)}
                     />
                   ) : (
-                    <div className="w-full h-[600px] bg-gray-200 flex items-center justify-center">
-                      <p className="text-gray-500">Image failed to load</p>
+                    <div className="w-full h-[600px] bg-gray-100 flex flex-col items-center justify-center p-4">
+                      <p className="text-gray-500 text-center mb-2">Unable to load image</p>
+                      <p className="text-sm text-gray-400">{image.alt}</p>
                     </div>
                   )}
                 </div>
