@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
-import { appointments, services, testimonials } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { appointments, services, testimonials, beautyTips } from "@db/schema";
+import { eq, and, or, desc } from "drizzle-orm";
 import OpenAI from "openai";
 import { z } from "zod";
 
@@ -40,6 +40,35 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/testimonials", async (_req, res) => {
     const allTestimonials = await db.select().from(testimonials);
     res.json(allTestimonials);
+  });
+
+  // Beauty Tips
+  app.get("/api/beauty-tips", async (req, res) => {
+    const { category, skinType, hairType, seasonality } = req.query;
+
+    let conditions = [];
+    if (category && category !== 'all') {
+      conditions.push(eq(beautyTips.category, category as string));
+    }
+    if (skinType && skinType !== 'all') {
+      conditions.push(eq(beautyTips.skinType, skinType as string));
+    }
+    if (hairType && hairType !== 'all') {
+      conditions.push(eq(beautyTips.hairType, hairType as string));
+    }
+    if (seasonality && seasonality !== 'all') {
+      conditions.push(eq(beautyTips.seasonality, seasonality as string));
+    }
+
+    const query = db.select().from(beautyTips)
+      .orderBy(desc(beautyTips.createdAt));
+
+    if (conditions.length > 0) {
+      query.where(and(...conditions));
+    }
+
+    const tips = await query;
+    res.json(tips);
   });
 
   // AI Chatbot
