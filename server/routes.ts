@@ -6,16 +6,13 @@ import { eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { z } from "zod";
 
+// the newest OpenAI model is "gpt-4o" which was released May 13, 2024
 const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-const appointmentSchema = z.object({
-  service: z.string().min(1, "Service selection is required"),
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  dateTime: z.string().min(1, "Date and time are required"),
+const chatMessageSchema = z.object({
+  message: z.string().min(1, "Message is required"),
 });
 
 export function registerRoutes(app: Express): Server {
@@ -27,41 +24,16 @@ export function registerRoutes(app: Express): Server {
 
   // Appointments
   app.post("/api/appointments", async (req, res) => {
-    try {
-      const validatedData = appointmentSchema.parse(req.body);
-      const appointment = await db.insert(appointments).values({
-        serviceId: parseInt(validatedData.service),
-        name: validatedData.name,
-        email: validatedData.email,
-        phone: validatedData.phone,
-        dateTime: new Date(validatedData.dateTime),
-        status: "pending",
-      }).returning();
-
-      res.json(appointment[0]);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: "Validation error", 
-          errors: error.errors 
-        });
-      }
-      console.error("Appointment creation error:", error);
-      res.status(500).json({ message: "Failed to create appointment" });
-    }
+    const appointment = await db.insert(appointments).values(req.body).returning();
+    res.json(appointment[0]);
   });
 
   app.get("/api/appointments", async (req, res) => {
-    try {
-      const { date } = req.query;
-      const results = await db.select()
-        .from(appointments)
-        .where(date ? eq(appointments.dateTime, new Date(date as string)) : undefined);
-      res.json(results);
-    } catch (error) {
-      console.error("Appointment fetch error:", error);
-      res.status(500).json({ message: "Failed to fetch appointments" });
-    }
+    const { date } = req.query;
+    const results = await db.select()
+      .from(appointments)
+      .where(date ? eq(appointments.dateTime, new Date(date as string)) : undefined);
+    res.json(results);
   });
 
   // Testimonials

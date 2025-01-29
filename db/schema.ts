@@ -12,9 +12,9 @@ export const services = pgTable("services", {
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   serviceId: integer("service_id").references(() => services.id),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone").notNull(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull(),
   dateTime: timestamp("date_time").notNull(),
   status: text("status").notNull().default("pending"),
   notes: text("notes"),
@@ -28,18 +28,9 @@ export const testimonials = pgTable("testimonials", {
   date: timestamp("date").notNull().defaultNow(),
 });
 
-// Schema types
 export const insertServiceSchema = createInsertSchema(services);
 export const selectServiceSchema = createSelectSchema(services);
 export const insertAppointmentSchema = createInsertSchema(appointments);
 export const selectAppointmentSchema = createSelectSchema(appointments);
 export const insertTestimonialSchema = createInsertSchema(testimonials);
 export const selectTestimonialSchema = createSelectSchema(testimonials);
-
-// Type exports
-export type InsertService = typeof services.$inferInsert;
-export type SelectService = typeof services.$inferSelect;
-export type InsertAppointment = typeof appointments.$inferInsert;
-export type SelectAppointment = typeof appointments.$inferSelect;
-export type InsertTestimonial = typeof testimonials.$inferInsert;
-export type SelectTestimonial = typeof testimonials.$inferSelect;
