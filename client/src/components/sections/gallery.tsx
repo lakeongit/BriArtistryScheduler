@@ -9,39 +9,39 @@ import { useState } from "react";
 
 const images = [
   {
-    src: "/attached_assets/1.jpg",
+    src: "./attached_assets/1.jpg",
     alt: "Beautiful bridal styling and preparation"
   },
   {
-    src: "/attached_assets/2.jpeg",
+    src: "./attached_assets/2.jpeg",
     alt: "Elegant bridal makeup session"
   },
   {
-    src: "/attached_assets/3.jpeg",
+    src: "./attached_assets/3.jpeg",
     alt: "Professional bridal hair styling"
   },
   {
-    src: "/attached_assets/4.jpeg",
+    src: "./attached_assets/4.jpeg",
     alt: "Sophisticated bridal beauty preparation"
   },
   {
-    src: "/attached_assets/5.jpeg",
+    src: "./attached_assets/5.jpeg",
     alt: "Glamorous bridal makeup application"
   },
   {
-    src: "/attached_assets/6.jpeg",
+    src: "./attached_assets/6.jpeg",
     alt: "Detailed bridal hair styling"
   },
   {
-    src: "/attached_assets/7.jpeg",
+    src: "./attached_assets/7.jpeg",
     alt: "Professional bridal beauty service"
   },
   {
-    src: "/attached_assets/9.jpeg",
+    src: "./attached_assets/9.jpeg",
     alt: "Elegant bridal styling session"
   },
   {
-    src: "/attached_assets/10.jpeg",
+    src: "./attached_assets/10.jpeg",
     alt: "Complete bridal beauty transformation"
   }
 ];
@@ -66,7 +66,7 @@ export default function Gallery() {
                 <div className="relative overflow-hidden rounded-lg shadow-lg">
                   {!imgError[index] ? (
                     <img
-                      src={image.src}
+                      src={new URL(image.src, import.meta.url).href}
                       alt={image.alt}
                       className="w-full h-[600px] object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
