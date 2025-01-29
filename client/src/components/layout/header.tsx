@@ -25,13 +25,12 @@ export default function Header() {
     <>
       {navItems.map((item) => (
         <NavigationMenuItem key={item.href}>
-          <Link href={item.href}>
-            <NavigationMenuLink
-              className="group inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-            >
-              {item.label}
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink
+            asChild
+            className="group inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+          >
+            <Link href={item.href}>{item.label}</Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
       ))}
     </>
@@ -41,14 +40,14 @@ export default function Header() {
     <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <a className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity duration-200">
+          <span className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity duration-200">
             BriArtistry
-          </a>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:block">
-          <NavigationMenuList className="gap-2">
+        <NavigationMenu>
+          <NavigationMenuList className="hidden md:flex gap-2">
             <NavLinks />
           </NavigationMenuList>
         </NavigationMenu>
