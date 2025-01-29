@@ -9,39 +9,39 @@ import { useState } from "react";
 
 const images = [
   {
-    url: "../../attached_assets/1.jpg",
+    url: "/attached_assets/1.jpeg",
     alt: "Beautiful bridal styling and preparation"
   },
   {
-    url: "../../attached_assets/2.jpeg",
+    url: "/attached_assets/2.jpeg",
     alt: "Elegant bridal makeup session"
   },
   {
-    url: "../../attached_assets/3.jpeg",
+    url: "/attached_assets/3.jpeg",
     alt: "Professional bridal hair styling"
   },
   {
-    url: "../../attached_assets/4.jpeg",
+    url: "/attached_assets/4.jpeg",
     alt: "Sophisticated bridal beauty preparation"
   },
   {
-    url: "../../attached_assets/5.jpeg",
+    url: "/attached_assets/5.jpeg",
     alt: "Glamorous bridal makeup application"
   },
   {
-    url: "../../attached_assets/6.jpeg",
+    url: "/attached_assets/6.jpeg",
     alt: "Detailed bridal hair styling"
   },
   {
-    url: "../../attached_assets/7.jpeg",
+    url: "/attached_assets/7.jpeg",
     alt: "Professional bridal beauty service"
   },
   {
-    url: "../../attached_assets/9.jpeg",
+    url: "/attached_assets/9.jpeg",
     alt: "Elegant bridal styling session"
   },
   {
-    url: "../../attached_assets/10.jpeg",
+    url: "/attached_assets/10.jpeg",
     alt: "Complete bridal beauty transformation"
   }
 ];
