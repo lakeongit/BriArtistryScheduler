@@ -9,39 +9,39 @@ import { useState } from "react";
 
 const images = [
   {
-    src: "/attached_assets/1.jpeg",
+    src: "/images/1.jpg",
     alt: "Beautiful bridal styling and preparation"
   },
   {
-    src: "/attached_assets/2.jpeg",
+    src: "/images/2.jpg",
     alt: "Elegant bridal makeup session"
   },
   {
-    src: "/attached_assets/3.jpeg",
+    src: "/images/3.jpg",
     alt: "Professional bridal hair styling"
   },
   {
-    src: "/attached_assets/4.jpeg",
+    src: "/images/4.jpg",
     alt: "Sophisticated bridal beauty preparation"
   },
   {
-    src: "/attached_assets/5.jpeg",
+    src: "/images/5.jpg",
     alt: "Glamorous bridal makeup application"
   },
   {
-    src: "/attached_assets/6.jpeg",
+    src: "/images/6.jpg",
     alt: "Detailed bridal hair styling"
   },
   {
-    src: "/attached_assets/7.jpeg",
+    src: "/images/7.jpg",
     alt: "Professional bridal beauty service"
   },
   {
-    src: "/attached_assets/9.jpeg",
+    src: "/images/9.jpg",
     alt: "Elegant bridal styling session"
   },
   {
-    src: "/attached_assets/10.jpeg",
+    src: "/images/10.jpg",
     alt: "Complete bridal beauty transformation"
   }
 ];
@@ -51,7 +51,7 @@ export default function Gallery() {
 
   const handleImageError = (index: number) => {
     setImgError(prev => ({...prev, [index]: true}));
-    console.error(`Failed to load image at index ${index}`);
+    console.error(`Failed to load image at index ${index}, path: ${images[index].src}`);
   };
 
   return (
@@ -63,18 +63,18 @@ export default function Gallery() {
           <CarouselContent>
             {images.map((image, index) => (
               <CarouselItem key={index}>
-                <div className="relative overflow-hidden rounded-lg">
+                <div className="relative overflow-hidden rounded-lg shadow-lg">
                   {!imgError[index] ? (
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-[600px] object-cover"
+                      className="w-full h-[600px] object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
                       onError={() => handleImageError(index)}
                     />
                   ) : (
-                    <div className="w-full h-[600px] bg-gray-200 flex items-center justify-center">
-                      <p className="text-gray-500">Image failed to load</p>
+                    <div className="w-full h-[600px] bg-gray-100 flex items-center justify-center">
+                      <p className="text-gray-500">Image temporarily unavailable</p>
                     </div>
                   )}
                 </div>
