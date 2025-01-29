@@ -23,8 +23,8 @@ export default function Header() {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/portfolio">
-                <NavigationMenuLink className="px-4 py-2">Portfolio</NavigationMenuLink>
+              <Link href="/#gallery">
+                <NavigationMenuLink className="px-4 py-2">Gallery</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>

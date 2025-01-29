@@ -28,31 +28,9 @@ export const testimonials = pgTable("testimonials", {
   date: timestamp("date").notNull().defaultNow(),
 });
 
-export const stylists = pgTable("stylists", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  title: text("title").notNull(),
-  bio: text("bio").notNull(),
-  imageUrl: text("image_url").notNull(),
-});
-
-export const portfolioItems = pgTable("portfolio_items", {
-  id: serial("id").primaryKey(),
-  stylistId: integer("stylist_id").references(() => stylists.id),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  imageUrl: text("image_url").notNull(),
-  category: text("category").notNull(),
-  date: timestamp("date").notNull().defaultNow(),
-});
-
 export const insertServiceSchema = createInsertSchema(services);
 export const selectServiceSchema = createSelectSchema(services);
 export const insertAppointmentSchema = createInsertSchema(appointments);
 export const selectAppointmentSchema = createSelectSchema(appointments);
 export const insertTestimonialSchema = createInsertSchema(testimonials);
 export const selectTestimonialSchema = createSelectSchema(testimonials);
-export const insertStylistSchema = createInsertSchema(stylists);
-export const selectStylistSchema = createSelectSchema(stylists);
-export const insertPortfolioItemSchema = createInsertSchema(portfolioItems);
-export const selectPortfolioItemSchema = createSelectSchema(portfolioItems);
