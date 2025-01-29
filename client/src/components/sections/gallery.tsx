@@ -9,39 +9,39 @@ import { useState } from "react";
 
 const images = [
   {
-    url: "/attached_assets/1.jpeg",
+    src: "/attached_assets/1.jpeg",
     alt: "Beautiful bridal styling and preparation"
   },
   {
-    url: "/attached_assets/2.jpeg",
+    src: "/attached_assets/2.jpeg",
     alt: "Elegant bridal makeup session"
   },
   {
-    url: "/attached_assets/3.jpeg",
+    src: "/attached_assets/3.jpeg",
     alt: "Professional bridal hair styling"
   },
   {
-    url: "/attached_assets/4.jpeg",
+    src: "/attached_assets/4.jpeg",
     alt: "Sophisticated bridal beauty preparation"
   },
   {
-    url: "/attached_assets/5.jpeg",
+    src: "/attached_assets/5.jpeg",
     alt: "Glamorous bridal makeup application"
   },
   {
-    url: "/attached_assets/6.jpeg",
+    src: "/attached_assets/6.jpeg",
     alt: "Detailed bridal hair styling"
   },
   {
-    url: "/attached_assets/7.jpeg",
+    src: "/attached_assets/7.jpeg",
     alt: "Professional bridal beauty service"
   },
   {
-    url: "/attached_assets/9.jpeg",
+    src: "/attached_assets/9.jpeg",
     alt: "Elegant bridal styling session"
   },
   {
-    url: "/attached_assets/10.jpeg",
+    src: "/attached_assets/10.jpeg",
     alt: "Complete bridal beauty transformation"
   }
 ];
@@ -66,7 +66,7 @@ export default function Gallery() {
                 <div className="relative overflow-hidden rounded-lg">
                   {!imgError[index] ? (
                     <img
-                      src={image.url}
+                      src={image.src}
                       alt={image.alt}
                       className="w-full h-[600px] object-cover"
                       loading="lazy"
