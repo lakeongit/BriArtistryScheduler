@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
-import { appointments, services, testimonials } from "@db/schema";
+import { appointments, services, testimonials, stylists, portfolioItems } from "@db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -40,6 +40,52 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/testimonials", async (_req, res) => {
     const allTestimonials = await db.select().from(testimonials);
     res.json(allTestimonials);
+  });
+
+  // Stylists
+  app.get("/api/stylists", async (_req, res) => {
+    const allStylists = await db.select().from(stylists);
+    res.json(allStylists);
+  });
+
+  app.get("/api/stylists/:id", async (req, res) => {
+    const stylist = await db.select()
+      .from(stylists)
+      .where(eq(stylists.id, parseInt(req.params.id)));
+
+    if (stylist.length === 0) {
+      return res.status(404).json({ message: "Stylist not found" });
+    }
+
+    const portfolio = await db.select()
+      .from(portfolioItems)
+      .where(eq(portfolioItems.stylistId, parseInt(req.params.id)));
+
+    res.json({
+      ...stylist[0],
+      portfolio
+    });
+  });
+
+  // Portfolio Items
+  app.get("/api/portfolio", async (req, res) => {
+    const { category } = req.query;
+    const query = db.select({
+      portfolioItem: portfolioItems,
+      stylist: {
+        name: stylists.name,
+        title: stylists.title
+      }
+    })
+    .from(portfolioItems)
+    .leftJoin(stylists, eq(portfolioItems.stylistId, stylists.id));
+
+    if (category) {
+      query.where(eq(portfolioItems.category, category as string));
+    }
+
+    const results = await query;
+    res.json(results);
   });
 
   // AI Chatbot
