@@ -15,6 +15,21 @@ const chatMessageSchema = z.object({
   message: z.string().min(1, "Message is required"),
 });
 
+const appointmentSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  serviceDateTime: z.string().min(1, "Service date and time are required"),
+  serviceLocation: z.string().min(1, "Service location is required"),
+  desiredFinishTime: z.string().min(1, "Desired finish time is required"),
+  makeupApplicationsCount: z.number().min(1, "Number of makeup applications is required"),
+  needsBridalHair: z.boolean(),
+  hairServicesCount: z.number().optional(),
+  needsBridalSkincare: z.boolean(),
+  notes: z.string().optional(),
+});
+
 export function registerRoutes(app: Express): Server {
   // Services
   app.get("/api/services", async (_req, res) => {
@@ -24,16 +39,38 @@ export function registerRoutes(app: Express): Server {
 
   // Appointments
   app.post("/api/appointments", async (req, res) => {
-    const appointment = await db.insert(appointments).values(req.body).returning();
-    res.json(appointment[0]);
+    try {
+      const validatedData = appointmentSchema.parse(req.body);
+      const appointment = await db.insert(appointments).values({
+        ...validatedData,
+        status: "pending",
+        serviceDateTime: new Date(validatedData.serviceDateTime),
+      }).returning();
+
+      res.json(appointment[0]);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error("Appointment creation error:", error);
+      res.status(500).json({ message: "Failed to create appointment" });
+    }
   });
 
   app.get("/api/appointments", async (req, res) => {
-    const { date } = req.query;
-    const results = await db.select()
-      .from(appointments)
-      .where(date ? eq(appointments.dateTime, new Date(date as string)) : undefined);
-    res.json(results);
+    try {
+      const { date } = req.query;
+      const results = await db.select()
+        .from(appointments)
+        .where(date ? eq(appointments.serviceDateTime, new Date(date as string)) : undefined);
+      res.json(results);
+    } catch (error) {
+      console.error("Appointment fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch appointments" });
+    }
   });
 
   // Testimonials
