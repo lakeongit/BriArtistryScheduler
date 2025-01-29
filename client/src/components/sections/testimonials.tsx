@@ -1,9 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+interface Testimonial {
+  id: number;
+  customerName: string;
+  content: string;
+  date: string;
+}
 
 export default function Testimonials() {
-  const { data: testimonials } = useQuery({
+  const { data: testimonials } = useQuery<Testimonial[]>({
     queryKey: ["/api/testimonials"],
   });
 
@@ -11,25 +23,29 @@ export default function Testimonials() {
     <section id="testimonials" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">Client Testimonials</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials?.map((testimonial) => (
-            <Card key={testimonial.id}>
-              <CardContent className="pt-6">
-                <div className="flex mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                  ))}
+
+        <Carousel className="max-w-4xl mx-auto">
+          <CarouselContent>
+            {testimonials?.map((testimonial) => (
+              <CarouselItem key={testimonial.id}>
+                <div className="bg-white rounded-lg shadow p-8">
+                  <blockquote>
+                    <p className="text-lg italic text-gray-700 mb-4">
+                      "{testimonial.content}"
+                    </p>
+                    <footer className="text-sm text-gray-600">
+                      <cite className="font-semibold not-italic">
+                        {testimonial.customerName}
+                      </cite>
+                    </footer>
+                  </blockquote>
                 </div>
-                <p className="text-gray-600 mb-4">{testimonial.content}</p>
-                <p className="font-semibold">{testimonial.customerName}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(testimonial.date).toLocaleDateString()}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex" />
+          <CarouselNext className="hidden md:flex" />
+        </Carousel>
       </div>
     </section>
   );
